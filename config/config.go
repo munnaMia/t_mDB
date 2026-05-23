@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strconv"
 
@@ -20,12 +21,12 @@ var configuration *Config
 func loadConfigs() {
 	err := godotenv.Load()
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	port, err := strconv.ParseInt(os.Getenv("PORT"), 10, 64)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	configuration = &Config{

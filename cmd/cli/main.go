@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"net"
+	"time"
 
+	tcolor "github.com/munnaMia/TColor"
 	"github.com/munnaMia/t_mDB/config"
 )
 
@@ -11,7 +12,14 @@ func main() {
 	// load configurations
 	cnf := config.GetConfig()
 
-	address := fmt.Sprintf("%s:%d", cnf.IP, cnf.PORT)
+	// _, err := net.Dial("tcp", strconv.Itoa(cnf.PORT))
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
+	tcolor.Println(tcolor.BlodYellow, tcolor.None, "t_mDB CLI started")
 
-	net.Dial("tcp", address)
+	for {
+		fmt.Print(tcolor.Sprintf(tcolor.Blue, tcolor.None, "\n %s:%d >>", cnf.IP, cnf.PORT))
+		time.Sleep(time.Second * 2)
+	}
 }
