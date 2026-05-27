@@ -1,14 +1,18 @@
 package cmd
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
-	"time"
+	"os"
+	"strings"
 
 	tcolor "github.com/munnaMia/TColor"
 	"github.com/munnaMia/t_mDB/config"
 )
 
 func Run() {
+
 	// load configurations
 	cnf := config.GetConfig()
 
@@ -16,11 +20,37 @@ func Run() {
 	// if err != nil {
 	// 	log.Fatalln(err)
 	// }
-	tcolor.Println(tcolor.BlodYellow, tcolor.None, "t_mDB CLI started")
+
+	scanner := bufio.NewScanner(os.Stdin)
+
+	tcolor.Println(tcolor.BlodWhite, tcolor.BgBlue, "\n t_mDB CLI started ")
 
 	for {
-		fmt.Print(tcolor.Sprintf(tcolor.Blue, tcolor.None, "\n %s:%d >>", cnf.IP, cnf.PORT))
+		fmt.Print(tcolor.Sprintf(tcolor.BlodWhite, tcolor.None, "\n %s:%d >> ", cnf.IP, cnf.PORT))
+		if scanner.Scan() {
+			input := scanner.Text()
+			tokens := strings.Split(input, " ")
+			command, err := extractCommand(tokens)
+			if err != nil {
+				fmt.Print(tcolor.Sprintf(tcolor.BlodRed, tcolor.None, "%s", err.Error()))
+				continue 
+			}
 
-		time.Sleep(time.Second*2)
+			// handle the command
+			CommandRegistry[command]()
+		}
+
 	}
+}
+
+// extract the main command from an input stream.
+func extractCommand(tokens []string) (string, error) {
+	command := strings.ToUpper(tokens[0])
+
+	// check the command exist or not
+	if _, ok := CommandRegistry[command]; ok {
+		return command, nil
+	}
+
+	return "", errors.New("unknown command.")
 }
