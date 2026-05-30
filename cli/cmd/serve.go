@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log"
+	"net"
 	"os"
 	"strconv"
 	"strings"
@@ -19,10 +21,13 @@ func Run() {
 	// load configurations
 	cnf := config.GetConfig()
 
-	// _, err := net.Dial("tcp", strconv.Itoa(cnf.PORT))
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
+	// dialing a tcp connection.
+	conn, err := net.Dial("tcp", cnf.IP+":"+strconv.Itoa(cnf.PORT))
+	if err != nil {
+		fmt.Println(cnf.PORT)
+		log.Fatalln(err)
+	}
+	defer conn.Close()
 
 	scanner := bufio.NewScanner(os.Stdin)
 
@@ -35,22 +40,30 @@ func Run() {
 			tokens := strings.Split(input, " ")
 			command, err := extractCommand(tokens)
 			if err != nil {
-				util.PrintError(err)
+				util.PrintError("Err:", err)
 				continue
 			}
 
 			if err = cmd.CommandValidation(command, tokens); err != nil {
-				util.PrintError(err)
+				util.PrintError("Err:", err)
 				continue
 			}
 
 			serializedEncodedTokes := parser.Encode(tokens)
-			for _, v := range serializedEncodedTokes {
-				fmt.Printf("%s", string(v))
-			}
-			// send seriallized tokens to backend.
+
+			sendData(conn, serializedEncodedTokes)
 		}
 
+	}
+}
+
+// sending the data through the TCP.
+func sendData(conn net.Conn, data []byte) {
+	defer conn.Close()
+
+	_, err := conn.Write(data)
+	if err != nil {
+		util.PrintError("Failed to write data:", err)
 	}
 }
 
