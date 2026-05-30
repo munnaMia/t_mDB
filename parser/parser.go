@@ -43,7 +43,7 @@ func encode(token any) []byte {
 	var serialized = []byte{}
 
 	switch v := token.(type) {
-	case []any:
+	case []string:
 		prepare = Array + strconv.Itoa(len(v)) + EOL
 	case string:
 		prepare = String + strconv.Itoa(len(v)) + EOL + v + EOL
