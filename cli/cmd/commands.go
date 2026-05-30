@@ -4,5 +4,10 @@ type CommandHandler func(args ...any) (error, []byte)
 
 // all the commands
 var CommandRegistry = map[string]CommandHandler{
-	"SET": handleSet,
+	"PING":   handlePing,
+	"SET":    handleSet,
+	"GET":    handleGet,
+	"UP":     handleUp,
+	"DEL":    handleDel,
+	"EXISTS": handleExists,
 }
