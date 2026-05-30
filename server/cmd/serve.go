@@ -1,13 +1,11 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"net"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/munnaMia/t_mDB/config"
 	"github.com/munnaMia/t_mDB/internals/util"
@@ -38,30 +36,23 @@ func Run() {
 			continue
 		}
 
-		go handleConnection(conn, db)
+		go handleConnection(conn, db, cnf)
 	}
 }
 
-func handleConnection(conn net.Conn, db *db.DB) {
+func handleConnection(conn net.Conn, db *db.DB, cnf *config.Config) {
 	defer conn.Close()
 	fmt.Println("test")
-	var massage []byte
+	var massage = make([]byte, cnf.PAYLOAD_SIZE)
 
-	reader := bufio.NewReader(conn)
-	// writer := bufio.NewWriter(conn)
+	for {
+		_, err := conn.Read(massage)
+		if err != nil {
+			util.PrintError(string(parser.Encode(err)))
+			return
+		}
 
-	// for {
-	_, err := reader.Read(massage)
-	if err != nil {
-		util.PrintError(string(parser.Encode(err)))
-		return
+		fmt.Println(string(massage))
 	}
-
-	ackmsg := strings.ToUpper(strings.TrimSpace(string(massage)))
-	res := fmt.Sprintf("Ack:  %s", ackmsg)
-	if _, err := conn.Write([]byte(res)); err != nil {
-		util.PrintError(string(parser.Encode(err)))
-	}
-	// }
 
 }

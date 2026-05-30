@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -38,13 +37,8 @@ func Run() {
 		if scanner.Scan() {
 			input := scanner.Text()
 			tokens := strings.Split(input, " ")
-			command, err := extractCommand(tokens)
-			if err != nil {
-				util.PrintError(string(parser.Encode(err)))
-				continue
-			}
 
-			if err = cmd.CommandValidation(command, tokens); err != nil {
+			if err := cmd.ValidateCommand(tokens, cnf); err != nil {
 				util.PrintError(string(parser.Encode(err)))
 				continue
 			}
@@ -65,16 +59,4 @@ func sendData(conn net.Conn, data []byte) {
 	if err != nil {
 		util.PrintError(string(parser.Encode(err)))
 	}
-}
-
-// extract the main command from an input stream.
-func extractCommand(tokens []string) (string, error) {
-	command := strings.ToUpper(tokens[0])
-
-	// check the command exist or not
-	if _, ok := cmd.CommandRegistry[command]; ok {
-		return command, nil
-	}
-
-	return "", errors.New("unknown command.")
 }

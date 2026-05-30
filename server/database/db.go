@@ -27,5 +27,5 @@ func (db *DB) Get(key string) {
 }
 
 func (db *DB) Exists(key string) bool {
-
+	return false
 }
