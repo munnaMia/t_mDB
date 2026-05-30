@@ -5,14 +5,17 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	tcolor "github.com/munnaMia/TColor"
 	"github.com/munnaMia/t_mDB/config"
+	cmd "github.com/munnaMia/t_mDB/internals/command"
+	"github.com/munnaMia/t_mDB/internals/util"
+	"github.com/munnaMia/t_mDB/parser"
 )
 
 func Run() {
-
 	// load configurations
 	cnf := config.GetConfig()
 
@@ -26,18 +29,26 @@ func Run() {
 	tcolor.Println(tcolor.BlodWhite, tcolor.BgBlue, "\n t_mDB CLI started ")
 
 	for {
-		fmt.Print(tcolor.Sprintf(tcolor.BlodWhite, tcolor.None, "\n %s:%d >> ", cnf.IP, cnf.PORT))
+		util.Print(cnf.IP + ":" + strconv.Itoa(cnf.PORT))
 		if scanner.Scan() {
 			input := scanner.Text()
 			tokens := strings.Split(input, " ")
 			command, err := extractCommand(tokens)
 			if err != nil {
-				fmt.Print(tcolor.Sprintf(tcolor.BlodRed, tcolor.None, "%s", err.Error()))
-				continue 
+				util.PrintError(err)
+				continue
 			}
 
-			// handle the command
-			CommandRegistry[command]()
+			if err = cmd.CommandValidation(command, tokens); err != nil {
+				util.PrintError(err)
+				continue
+			}
+
+			serializedEncodedTokes := parser.Encode(tokens)
+			for _, v := range serializedEncodedTokes {
+				fmt.Printf("%s", string(v))
+			}
+			// send seriallized tokens to backend.
 		}
 
 	}
@@ -48,7 +59,7 @@ func extractCommand(tokens []string) (string, error) {
 	command := strings.ToUpper(tokens[0])
 
 	// check the command exist or not
-	if _, ok := CommandRegistry[command]; ok {
+	if _, ok := cmd.CommandRegistry[command]; ok {
 		return command, nil
 	}
 
