@@ -13,5 +13,5 @@ func Print(msg string) {
 
 // print error massage as bold-red text
 func PrintError(msg string, err error) {
-	fmt.Print(tcolor.Sprintf(tcolor.BlodRed, tcolor.None, "%s %s", msg, err.Error()))
+	fmt.Print(tcolor.Sprintf(tcolor.BlodRed, tcolor.None, "%s %s \n", msg, err.Error()))
 }

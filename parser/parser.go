@@ -14,6 +14,7 @@ const (
 	Array  = "*"
 	String = "$"
 	Number = ":"
+	Error  = "-"
 )
 
 /*
@@ -24,17 +25,17 @@ const (
 )
 
 // encode the tokens in tmDB serialized byte array
-func Encode(tokens []string) []byte {
-	var serializedTokens = []byte{}
+func Encode(tokens any) []byte {
 
-	// parsed the array first
-	serializedTokens = append(serializedTokens, encode(tokens)...)
-
-	for _, token := range tokens {
-		parsedToken := encode(token)
-		serializedTokens = append(serializedTokens, parsedToken...)
+	switch v := tokens.(type) {
+	case []string:
+		return handleString(v)
+	case error:
+		return handleError(v)
+	default:
+		return []byte{}
 	}
-	return serializedTokens
+
 }
 
 // encode individual token as byte slices
@@ -49,6 +50,8 @@ func encode(token any) []byte {
 		prepare = String + strconv.Itoa(len(v)) + EOL + v + EOL
 	case int:
 		prepare = Number + strconv.Itoa(v) + EOL
+	case error:
+		prepare = Error + v.Error() + EOL
 	}
 
 	serialized = append(serialized, []byte(prepare)...)
