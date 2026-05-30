@@ -1,37 +1,39 @@
 package command
 
+import db "github.com/munnaMia/t_mDB/server/database"
+
 // handle ping command
-func handlePing(args ...any) (error, []byte) {
+func handlePing(db *db.DB, args ...any) (error, []byte) {
 	// token have command, key, value for set.
 	return nil, []byte{}
 }
 
 // handle set command
-func handleSet(args ...any) (error, []byte) {
+func handleSet(db *db.DB, args ...any) (error, []byte) {
 	// token have command, key, value for set.
 	return nil, []byte{}
 }
 
 // handle get command
-func handleGet(args ...any) (error, []byte) {
+func handleGet(db *db.DB, args ...any) (error, []byte) {
 	// token have command, key, value for set.
 	return nil, []byte{}
 }
 
 // handle update command
-func handleUp(args ...any) (error, []byte) {
+func handleUp(db *db.DB, args ...any) (error, []byte) {
 	// token have command, key, value for set.
 	return nil, []byte{}
 }
 
 // handle delete command
-func handleDel(args ...any) (error, []byte) {
+func handleDel(db *db.DB, args ...any) (error, []byte) {
 	// token have command, key, value for set.
 	return nil, []byte{}
 }
 
 // handle exists command
-func handleExists(args ...any) (error, []byte) {
+func handleExists(db *db.DB, args ...any) (error, []byte) {
 	// token have command, key, value for set.
 	return nil, []byte{}
 }

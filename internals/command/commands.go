@@ -1,6 +1,8 @@
 package command
 
-type CommandHandler func(args ...any) (error, []byte)
+import db "github.com/munnaMia/t_mDB/server/database"
+
+type CommandHandler func(db *db.DB, args ...any) (error, []byte)
 
 // all the commands
 var CommandRegistry = map[string]CommandHandler{
