@@ -9,6 +9,7 @@ import (
 
 	"github.com/munnaMia/t_mDB/config"
 	"github.com/munnaMia/t_mDB/internals/util"
+	"github.com/munnaMia/t_mDB/parser"
 )
 
 func Run() {
@@ -18,7 +19,7 @@ func Run() {
 	// start tcp lintener
 	ln, err := net.Listen("tcp", ":"+strconv.Itoa(cnf.PORT))
 	if err != nil {
-		util.PrintError("Err listing: ", err)
+		util.PrintError(string(parser.Encode(err)))
 		os.Exit(1)
 	}
 	defer ln.Close()
@@ -27,8 +28,8 @@ func Run() {
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			util.PrintError("Err accepting conn: ", err)
-			os.Exit(1)
+			util.PrintError(string(parser.Encode(err)))
+			continue
 		}
 
 		go handleConnection(conn)
