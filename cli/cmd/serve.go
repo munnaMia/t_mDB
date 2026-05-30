@@ -40,12 +40,12 @@ func Run() {
 			tokens := strings.Split(input, " ")
 			command, err := extractCommand(tokens)
 			if err != nil {
-				util.PrintError("Err:", err)
+				util.PrintError(string(parser.Encode(err)))
 				continue
 			}
 
 			if err = cmd.CommandValidation(command, tokens); err != nil {
-				util.PrintError("Err:", err)
+				util.PrintError(string(parser.Encode(err)))
 				continue
 			}
 
@@ -63,7 +63,7 @@ func sendData(conn net.Conn, data []byte) {
 
 	_, err := conn.Write(data)
 	if err != nil {
-		util.PrintError("Failed to write data:", err)
+		util.PrintError(string(parser.Encode(err)))
 	}
 }
 
