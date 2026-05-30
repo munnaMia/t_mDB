@@ -51,7 +51,7 @@ func encode(token any) []byte {
 	case int:
 		prepare = Number + strconv.Itoa(v) + EOL
 	case error:
-		prepare = Error + v.Error() + EOL
+		prepare = Error + "Err " + v.Error() + EOL
 	}
 
 	serialized = append(serialized, []byte(prepare)...)
