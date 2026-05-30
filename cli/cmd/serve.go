@@ -53,8 +53,6 @@ func Run() {
 
 // sending the data through the TCP.
 func sendData(conn net.Conn, data []byte) {
-	defer conn.Close()
-
 	_, err := conn.Write(data)
 	if err != nil {
 		util.PrintError(string(parser.Encode(err)))

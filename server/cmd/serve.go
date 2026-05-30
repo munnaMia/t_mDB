@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -43,14 +45,20 @@ func Run() {
 func handleConnection(conn net.Conn, db *db.DB, cnf *config.Config) {
 	defer conn.Close()
 	fmt.Println("test")
-	var massage = make([]byte, cnf.PAYLOAD_SIZE)
+	massage := make([]byte, cnf.PAYLOAD_SIZE)
 
 	for {
 		_, err := conn.Read(massage)
 		if err != nil {
+			if errors.Is(err, io.EOF) {
+				util.PrintError(string("Client closed the connection gracefully."))
+				return
+			}
 			util.PrintError(string(parser.Encode(err)))
 			return
 		}
+
+		
 
 		fmt.Println(string(massage))
 	}
